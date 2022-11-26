@@ -1,4 +1,4 @@
-package org.sdvina.feedmore
+package org.sdvina.feedmore.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
