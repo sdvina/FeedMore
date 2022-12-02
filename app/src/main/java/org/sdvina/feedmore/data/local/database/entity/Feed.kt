@@ -1,5 +1,6 @@
-package org.sdvina.feedmore.data.model.feed
+package org.sdvina.feedmore.data.local.database.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
@@ -10,9 +11,9 @@ data class Feed(
     var title: String,
     val website: String,
     val description: String? = null,
-    val imageUrl: String? = null,
+    @ColumnInfo(name = "image_url") val imageUrl: String? = null,
     var category: String = "Uncategorized",
-    var unreadCount: Int
+    @ColumnInfo(name = "unread_count") var unreadCount: Int
 ): Serializable {
 
     companion object {

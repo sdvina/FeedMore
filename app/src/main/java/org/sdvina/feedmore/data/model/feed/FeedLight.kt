@@ -1,9 +1,11 @@
 package org.sdvina.feedmore.data.model.feed
 
+import androidx.room.ColumnInfo
+
 data class FeedLight(
     val url: String,
     var title: String,
-    val imageUrl: String?,
+    @ColumnInfo(name = "image_url") val imageUrl: String?,
     var category: String,
-    var unreadCount: Int
+    @ColumnInfo(name = "unread_count") var unreadCount: Int
 )
