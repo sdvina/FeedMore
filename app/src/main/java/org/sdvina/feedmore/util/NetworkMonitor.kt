@@ -7,6 +7,7 @@ import android.net.Network
 import android.net.NetworkRequest
 
 class NetworkMonitor(context: Context) {
+
     var isOnline = false
         private set
     private val conMan = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

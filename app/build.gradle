@@ -71,6 +71,20 @@ dependencies {
     // coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
+    // Networking
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.7"
+
+    // WorkManager
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
+
+    // RSS
+    def rome_version = "1.18.0"
+    implementation "com.rometools:rome:$rome_version"
+    implementation "com.rometools:rome-opml:$rome_version"
+
     // ROOM+Paging
     def room_version = "2.5.0-alpha02"
     def paging_version = "3.2.0-alpha03"
