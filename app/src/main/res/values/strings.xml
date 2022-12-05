@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">FeedMore</string>
+
+    <!-- content description -->
+    <string name="cd_bookmark">Bookmark</string>
+    <string name="cd_unbookmark">Unbookmark</string>
+    <string name="cd_morevert">More Actions</string>
+    <string name="cd_menu">Menu</string>
+    <string name="cd_share">Share</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_filter">Filter</string>
+    <string name="cd_mark_all_as_read">Mark All as Read</string>
+    <string name="cd_mark_all_as_unread">Mark All as Unread</string>
+    <string name="cd_bookmark_all">Bookmark All</string>
+    <string name="cd_unbookmark_all">Unbookmark All</string>
+    <string name="cd_feed_info">Feed Info</string>
+    <string name="cd_visit_website">Visit Website</string>
+    <string name="cd_remove_feed">Remove Feed</string>
+
+    <string name="item_filter">Filter</string>
+    <string name="item_mark_all_as_read">Mark All as Read</string>
+    <string name="item_mark_all_as_urread">Mark All as Unread</string>
+    <string name="item_bookmark_all">Bookmark All</string>
+    <string name="item_unbookmark_all">Unbookmark All</string>
+    <string name="item_feed_info">Feed Info</string>
+    <string name="item_visit_website">Visit Website</string>
+    <string name="item_remove_feed">Remove Feed</string>
 </resources>
