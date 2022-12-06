@@ -7,10 +7,11 @@ import org.sdvina.feedmore.data.local.database.entity.FeedWithEntries
 import org.sdvina.feedmore.data.local.database.entity.Entry
 import org.sdvina.feedmore.data.model.entry.EntryToggleable
 import org.sdvina.feedmore.data.local.database.entity.Feed
+import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
 import org.sdvina.feedmore.data.model.feed.FeedLite
 import org.sdvina.feedmore.data.model.feed.FeedManageable
-import org.sdvina.feedmore.util.NetworkMonitor
+import org.sdvina.feedmore.utils.NetworkMonitor
 import java.util.concurrent.Executors
 
 class FeedMoreRepository private constructor(
@@ -33,7 +34,7 @@ class FeedMoreRepository private constructor(
 
     fun getEntry(entryUrl: String): LiveData<Entry?> = dao.getEntry(entryUrl)
 
-    fun getPagedEntriesByFeed(feedUrl: String): PagingSource<Int, Entry> = dao.getPagedEntriesByFeed(feedUrl)
+    fun getPagedEntryLitesByFeed(feedUrl: String): PagingSource<Int, EntryLite> = dao.getPagedEntryLitesByFeed(feedUrl)
 
     fun getPagedNewEntries(): PagingSource<Int, Entry> = dao.getPagedNewEntries()
 

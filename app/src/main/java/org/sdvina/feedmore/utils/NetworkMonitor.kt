@@ -1,4 +1,4 @@
-package org.sdvina.feedmore.util
+package org.sdvina.feedmore.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

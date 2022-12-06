@@ -20,8 +20,8 @@ import org.sdvina.feedmore.ui.theme.FeedMoreTheme
 @Composable
 fun BookmarkButton(
     isBookmarked: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     val clickLabel = stringResource(
         if (isBookmarked) R.string.cd_unbookmark else R.string.cd_bookmark

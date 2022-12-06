@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 object AppPreferences {
 
     private lateinit var prefs: SharedPreferences
-    private const val NAME = "FeedPreferences"
+    private const val NAME = "AppPreferences"
 
     private const val LAST_VIEWED_FEED_ID = "last_viewed_feed_id"
     private const val FEED_MANAGER_ORDER = "feed_manager_order"

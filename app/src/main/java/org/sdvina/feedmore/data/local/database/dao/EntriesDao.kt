@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
 import org.sdvina.feedmore.data.local.database.entity.Entry
+import org.sdvina.feedmore.data.model.entry.EntryLite
 
 interface EntriesDao {
 
@@ -20,11 +21,11 @@ interface EntriesDao {
     fun getPagedFavoriteEntries(): PagingSource<Int, Entry>
 
     @Query(
-        "SELECT entry.* FROM entry " +
+        "SELECT url, title, website, date, image_url, is_favorite, is_read FROM entry " +
             "INNER JOIN feed_entry ON entry.url = feed_entry.entry_url " +
             "WHERE feed_entry.feed_url = :feedUrl"
     )
-    fun getPagedEntriesByFeed(feedUrl: String): PagingSource<Int, Entry>
+    fun getPagedEntryLitesByFeed(feedUrl: String): PagingSource<Int, EntryLite>
 
     @Update
     fun updateEntries(entries: List<Entry>)

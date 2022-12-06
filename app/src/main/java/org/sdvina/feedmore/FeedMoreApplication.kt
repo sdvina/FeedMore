@@ -5,7 +5,7 @@ import com.tencent.mmkv.MMKV
 import org.sdvina.feedmore.data.local.AppPreferences
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.repository.FeedMoreRepository
-import org.sdvina.feedmore.util.NetworkMonitor
+import org.sdvina.feedmore.utils.NetworkMonitor
 
 class FeedMoreApplication : Application() {
     override fun onCreate() {
