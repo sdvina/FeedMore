@@ -8,7 +8,7 @@ object AppPreferences {
     private lateinit var prefs: SharedPreferences
     private const val NAME = "AppPreferences"
 
-    private const val LAST_VIEWED_FEED_ID = "last_viewed_feed_id"
+    private const val LAST_VIEWED_FEED_URL = "last_viewed_feed_url"
     private const val FEED_MANAGER_ORDER = "feed_manager_order"
     private const val FEED_LIST_ORDER = "feed_list_order"
     private const val ENTRY_LIST_ORDER = "entry_list_order"
@@ -36,9 +36,9 @@ object AppPreferences {
         editor.apply()
     }
 
-    var lastViewedFeedId: String?
-        get() = prefs.getString(LAST_VIEWED_FEED_ID, null)
-        set(value) = prefs.edit { it.putString(LAST_VIEWED_FEED_ID, value) }
+    var lastViewedFeedUrl: String?
+        get() = prefs.getString(LAST_VIEWED_FEED_URL, null)
+        set(value) = prefs.edit { it.putString(LAST_VIEWED_FEED_URL, value) }
 
     var feedManagerOrder: Int
         get() = prefs.getInt(FEED_MANAGER_ORDER, 0)

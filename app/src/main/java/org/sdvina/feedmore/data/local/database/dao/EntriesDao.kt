@@ -14,11 +14,13 @@ interface EntriesDao {
     @Query("SELECT * FROM entry WHERE url = :entryUrl")
     fun getEntry(entryUrl: String): LiveData<Entry?>
 
-    @Query("SELECT * FROM entry WHERE is_read = 0 ORDER BY date DESC")
-    fun getPagedNewEntries(): PagingSource<Int, Entry>
+    @Query("SELECT url, title, website, date, image_url, is_favorite, is_read FROM entry " +
+            "WHERE is_read = 0 ORDER BY date DESC")
+    fun getPagedNewEntryLites(): PagingSource<Int, EntryLite>
 
-    @Query("SELECT * FROM entry WHERE is_favorite = 1")
-    fun getPagedFavoriteEntries(): PagingSource<Int, Entry>
+    @Query("SELECT url, title, website, date, image_url, is_favorite, is_read FROM entry " +
+            "WHERE is_favorite = 1")
+    fun getPagedFavoriteEntryLites(): PagingSource<Int, EntryLite>
 
     @Query(
         "SELECT url, title, website, date, image_url, is_favorite, is_read FROM entry " +

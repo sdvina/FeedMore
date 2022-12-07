@@ -36,9 +36,9 @@ class FeedMoreRepository private constructor(
 
     fun getPagedEntryLitesByFeed(feedUrl: String): PagingSource<Int, EntryLite> = dao.getPagedEntryLitesByFeed(feedUrl)
 
-    fun getPagedNewEntries(): PagingSource<Int, Entry> = dao.getPagedNewEntries()
+    fun getPagedNewEntryLites(): PagingSource<Int, EntryLite> = dao.getPagedNewEntryLites()
 
-    fun getPagedFavoriteEntries(): PagingSource<Int, Entry> = dao.getPagedFavoriteEntries()
+    fun getPagedFavoriteEntryLites(): PagingSource<Int, EntryLite> = dao.getPagedFavoriteEntryLites()
 
     fun addFeeds(vararg feed: Feed) {
         executor.execute { dao.addFeeds(*feed) }
