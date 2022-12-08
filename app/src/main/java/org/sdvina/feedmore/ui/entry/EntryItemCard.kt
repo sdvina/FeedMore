@@ -1,6 +1,5 @@
 package org.sdvina.feedmore.ui.entry
 
-import android.content.Context
 import android.text.format.DateUtils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -25,4 +25,11 @@
     <string name="item_feed_info">Feed Info</string>
     <string name="item_visit_website">Visit Website</string>
     <string name="item_remove_feed">Remove Feed</string>
+
+    <string name="add_feeds">Add Feeds</string>
+    <string name="manage_feeds">Manage Feeds</string>
+    <string name="new_entries">New Entries</string>
+    <string name="favorite_entries">Favorite Entries</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
 </resources>

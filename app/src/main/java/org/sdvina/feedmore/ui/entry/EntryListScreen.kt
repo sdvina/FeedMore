@@ -1,5 +1,6 @@
 package org.sdvina.feedmore.ui.entry
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,13 +14,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.sdvina.feedmore.ui.components.MoreActionsButton
 import org.sdvina.feedmore.ui.theme.FeedMoreTheme
 import org.sdvina.feedmore.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryListSreen() {
+fun EntryListScreen(
+    openDrawer: () -> Unit,
+    navController: NavHostController,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -28,17 +34,20 @@ fun EntryListSreen() {
                         text = "Feed Name",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
-                    )
-                },
+                    ) },
                 navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(onClick = { openDrawer() }) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
                             contentDescription = stringResource(R.string.cd_menu)
                         )
-                    }
-                },
+                    } },
                 actions = {
+                    IconButton(onClick = {  }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(R.string.cd_search)
+                        ) }
                     MoreActionsButton {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.item_filter)) },
@@ -92,31 +101,34 @@ fun EntryListSreen() {
                     }
                 }
             )
-        },
-        content = { innerPadding ->
-            LazyColumn(
-                contentPadding = innerPadding,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val list = (0..5).map { it.toString() }
-                items(count = list.size) {
-                    Text(
-                        text = list[it],
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
-                }
+        }
+    ){ innerPadding ->
+        LazyColumn(
+            contentPadding = innerPadding,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val list = (0..5).map { it.toString() }
+            items(count = list.size) {
+                Text(
+                    text = list[it],
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
             }
         }
-    )
+    }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
 fun EntryScreenPreview(){
     FeedMoreTheme {
-        EntryListSreen()
+        EntryListScreen(
+            openDrawer = {},
+            navController = rememberAnimatedNavController()
+        )
     }
 }
