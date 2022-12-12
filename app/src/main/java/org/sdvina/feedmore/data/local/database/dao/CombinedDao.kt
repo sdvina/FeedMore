@@ -2,13 +2,12 @@ package org.sdvina.feedmore.data.local.database.dao
 
 import androidx.room.Dao
 import androidx.room.Transaction
-import org.sdvina.feedmore.data.model.cross.FeedTitleWithEntriesToggleable
 import org.sdvina.feedmore.data.local.database.entity.Entry
 import org.sdvina.feedmore.data.model.entry.EntryToggleable
 import org.sdvina.feedmore.data.local.database.entity.Feed
 
 @Dao
-interface CombinedDao: FeedsDao, EntriesDao, FeedEntryCrossRefsDao {
+interface CombinedDao: FeedDao, EntryDao, FeedEntryCrossRefDao {
 
     @Transaction
     fun addFeedAndEntries(feed: Feed, entries: List<Entry>) {

@@ -1,31 +1,44 @@
 package org.sdvina.feedmore.ui.entry
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.sdvina.feedmore.ui.components.MoreActionsButton
 import org.sdvina.feedmore.ui.theme.FeedMoreTheme
 import org.sdvina.feedmore.R
+import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
+import org.sdvina.feedmore.repository.FeedMoreRepository
+import org.sdvina.feedmore.utils.NetworkMonitor
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 fun EntryListScreen(
     openDrawer: () -> Unit,
     navController: NavHostController,
+    entryViewModel: EntryViewModel
 ) {
+    val viewState by entryViewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val isRefreshing = remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,39 +109,75 @@ fun EntryListScreen(
                             leadingIcon = {
                                 Icon(
                                     Icons.Filled.Delete,
-                                    contentDescription = stringResource(R.string.cd_visit_website)
+                                    contentDescription = stringResource(R.string.cd_remove_feed)
                                 )})
                     }
                 }
             )
         }
     ){ innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        val contentModifier = Modifier.padding(innerPadding)
+        SwipeRefreshScreen(
+            modifier = contentModifier,
+            isRefreshing = isRefreshing.value,
+            onRefresh = {
+                scope.launch {
+                    isRefreshing.value = true
+                    delay(2000)
+                    //items.value = items.value.shuffled()
+                    isRefreshing.value = false
+                }
+            }
+        )
+    }
+}
+
+
+
+
+@Composable
+fun SwipeRefreshScreen(
+    modifier: Modifier = Modifier,
+    isRefreshing: Boolean = false,
+    onRefresh: () -> Unit = {},
+) {
+    val refreshState = rememberSwipeRefreshState(isRefreshing)
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        SwipeRefresh(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            state = refreshState,
+            onRefresh = { onRefresh() }
         ) {
-            val list = (0..5).map { it.toString() }
-            items(count = list.size) {
-                Text(
-                    text = list[it],
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            ) {
+
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
 fun EntryScreenPreview(){
     FeedMoreTheme {
+        AppDataBaseHelper.onCreate(LocalContext.current)
+        FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
         EntryListScreen(
             openDrawer = {},
-            navController = rememberAnimatedNavController()
+            navController = rememberAnimatedNavController(),
+            entryViewModel = viewModel(
+                factory = EntryViewModel.provideFactory(FeedMoreRepository.get())
+            )
         )
     }
 }

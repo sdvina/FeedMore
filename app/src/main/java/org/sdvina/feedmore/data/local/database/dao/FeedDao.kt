@@ -2,12 +2,13 @@ package org.sdvina.feedmore.data.local.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import org.sdvina.feedmore.data.local.database.entity.Feed
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
 import org.sdvina.feedmore.data.model.feed.FeedLite
 import org.sdvina.feedmore.data.model.feed.FeedManageable
 
-interface FeedsDao {
+interface FeedDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addFeeds(vararg feed: Feed)
@@ -16,7 +17,7 @@ interface FeedsDao {
     fun getFeed(feedUrl: String): LiveData<Feed?>
 
     @Query("SELECT url, title, image_url, category, unread_count FROM feed")
-    fun getFeedsLight(): LiveData<List<FeedLite>>
+    fun getFeedLites(): Flow<List<FeedLite>>
 
     @Query("SELECT url, title, website, image_url, description, category FROM feed")
     fun getFeedsManageable(): LiveData<List<FeedManageable>>

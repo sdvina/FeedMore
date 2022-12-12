@@ -6,10 +6,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import org.sdvina.feedmore.data.local.AppPreferences
+import org.sdvina.feedmore.repository.FeedMoreRepository
 import org.sdvina.feedmore.ui.entry.EntryListScreen
+import org.sdvina.feedmore.ui.entry.EntryViewModel
 
 object AppDestinations {
     const val ENTRY_LIST_ROUTE = "entryList"
@@ -25,7 +29,8 @@ object AppDestinations {
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    openDrawer: ()  -> Unit
+    openDrawer: ()  -> Unit,
+    repository: FeedMoreRepository
 ) {
     AnimatedNavHost(
         navController = navController,
@@ -45,10 +50,13 @@ fun AppNavigation(
         }
     ){
         composable(AppDestinations.ENTRY_LIST_ROUTE) {
-
+            val entryViewModel: EntryViewModel = viewModel(
+                factory = EntryViewModel.provideFactory(repository)
+            )
             EntryListScreen(
+                navController = navController,
                 openDrawer = openDrawer,
-                navController = navController
+                entryViewModel = entryViewModel
             )
         }
         composable(AppDestinations.ADD_FEED_ROUTE) {

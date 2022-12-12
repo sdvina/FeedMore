@@ -2,6 +2,7 @@ package org.sdvina.feedmore.repository
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
+import kotlinx.coroutines.flow.Flow
 import org.sdvina.feedmore.data.local.database.AppDatabase
 import org.sdvina.feedmore.data.local.database.entity.FeedWithEntries
 import org.sdvina.feedmore.data.local.database.entity.Entry
@@ -24,7 +25,7 @@ class FeedMoreRepository private constructor(
 
     fun getFeed(feedUrl: String): LiveData<Feed?> = dao.getFeed(feedUrl)
 
-    fun getFeedsLight(): LiveData<List<FeedLite>> = dao.getFeedsLight()
+    fun getFeedLites(): Flow<List<FeedLite>> = dao.getFeedLites()
 
     fun getFeedUrls(): LiveData<List<String>> = dao.getFeedUrls()
 

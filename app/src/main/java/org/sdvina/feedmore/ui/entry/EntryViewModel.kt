@@ -1,70 +1,100 @@
 package org.sdvina.feedmore.ui.entry
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.AppPreferences
 import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.repository.FeedMoreRepository
 import org.sdvina.feedmore.utils.ErrorMessage
 
-private data class EntryViewModelState(
-    val entryLiteFlow: Flow<PagingData<EntryLite>>? =  null,
+data class EntryViewState(
+    val entryLites: PagingData<EntryLite> = PagingData.empty(),
     val selectedEntryUrl: String? = null,
     val isEntryOpen: Boolean = false,
     val favorites: Set<String> = emptySet(),
-    val isLoading: Boolean = false,
+    val refreshing: Boolean = false,
     val errorMessages: List<ErrorMessage> = emptyList(),
     val searchInput: String = "",
 )
 
 class EntryViewModel(
-    private val preferences: AppPreferences,
     private val repository: FeedMoreRepository
 ): ViewModel() {
-    private val viewModelState = MutableStateFlow(EntryViewModelState(isLoading = true))
     private val pagingConfig = PagingConfig(pageSize = 20)
-    // TODO
-    //init {
-/*        preferences.lastViewedFeedUrl?.let {
-            viewModelState.update {
-                it.entryLiteFlow = Pager(pagingConfig) {
-                    repository.getPagedEntryLitesByFeed(it)
-                }.flow.cachedIn(viewModelScope)
-            }
-        }*/
-    //}
+    private val refreshing = MutableStateFlow(false)
+    private val _state = MutableStateFlow(EntryViewState())
+    val state: StateFlow<EntryViewState>
+        get() = _state
+
     init{
         viewModelScope.launch {
-            preferences.lastViewedFeedUrl?.let { url ->
-                viewModelState.update {
-                    it.copy(entryLiteFlow = getEntryLiteFlow(url))
-                }
+            combine(
+                getEntryLiteFlow(AppPreferences.lastViewedFeedUrl),
+                refreshing
+            ) { entryLites, refreshing ->
+                EntryViewState(
+                    entryLites = entryLites,
+                    refreshing = refreshing
+                )
+
+            }.catch { throwable ->
+                // TODO
+                throw throwable
+            }.collect {
+                _state.value = it
             }
+            //refresh("")
         }
     }
 
-    private fun getEntryLiteFlow(feedUrl: String): Flow<PagingData<EntryLite>> {
-       return Pager(pagingConfig){
-            repository.getPagedEntryLitesByFeed(feedUrl)
-        }.flow.cachedIn(viewModelScope)
+    private fun refresh(feedUrl: String) {
+        viewModelScope.launch {
+            runCatching {
+                refreshing.value = true
+                    //TODO
+            }
+            refreshing.value = false
+        }
+    }
+
+    private fun getEntryLiteFlow(feedUrl: String?): Flow<PagingData<EntryLite>> {
+        feedUrl?.let {
+            return Pager(pagingConfig){
+                repository.getPagedEntryLitesByFeed(feedUrl)
+            }.flow.cachedIn(viewModelScope)
+        }
+        return emptyFlow()
     }
 
     fun errorShown(errorId: Long) {
-        viewModelState.update { currentState ->
+        _state.update { currentState ->
             val errorMessages = currentState.errorMessages.filterNot { it.id == errorId }
             currentState.copy(errorMessages = errorMessages)
         }
     }
 
+    fun onEntrySelected(entryUrl: String){
+        // TODO
+    }
+
     fun onSearchInputChanged(searchInput: String) {
-        viewModelState.update {
+        _state.update {
             it.copy(searchInput = searchInput)
         }
     }
 
+    companion object {
+        fun provideFactory(
+            repository: FeedMoreRepository
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return EntryViewModel(repository) as T
+            }
+        }
+    }
 }

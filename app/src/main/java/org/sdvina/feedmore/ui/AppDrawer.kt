@@ -23,16 +23,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.sdvina.feedmore.R
+import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
+import org.sdvina.feedmore.repository.FeedMoreRepository
+import org.sdvina.feedmore.ui.entry.EntryViewModel
+import org.sdvina.feedmore.ui.feed.DrawerFeedList
+import org.sdvina.feedmore.ui.feed.FeedViewModel
+import org.sdvina.feedmore.utils.NetworkMonitor
 
 @Composable
 fun AppDrawer(
     navController: NavController,
     closeDrawer: () -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier,
+    repository: FeedMoreRepository
+) {
 
     LazyColumn(modifier = modifier) {
         item { DrawerHeader() }
@@ -66,6 +77,16 @@ fun AppDrawer(
             closeDrawer()
         }}
         // EntryLiteList
+        item {
+            val viewModel: FeedViewModel = viewModel(
+                factory = FeedViewModel.provideFactory(repository)
+            )
+            DrawerFeedList(
+                navController = navController,
+                closeDrawer = closeDrawer,
+                viewModel = viewModel
+            )
+        }
         item { DrawerButton(icon = Icons.Filled.Info, label = stringResource(R.string.about)){
             navController.navigate(AppDestinations.ABOUT_ROUTE) {
                 launchSingleTop = true
@@ -102,6 +123,18 @@ fun DrawerButton(
 }
 
 @Preview
+@Composable
+fun AppDrawerPreview(){
+    AppDataBaseHelper.onCreate(LocalContext.current)
+    FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
+    AppDrawer(
+        navController = rememberNavController(),
+        closeDrawer = { /*TODO*/ },
+        repository = FeedMoreRepository.get()
+    )
+}
+
+//@Preview
 @Composable
 fun DrawerHeader(modifier: Modifier = Modifier) {
     val imageUrl = "https://bing.img.run/1366x768.php"

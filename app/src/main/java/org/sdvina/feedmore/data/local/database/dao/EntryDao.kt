@@ -6,7 +6,7 @@ import androidx.room.*
 import org.sdvina.feedmore.data.local.database.entity.Entry
 import org.sdvina.feedmore.data.model.entry.EntryLite
 
-interface EntriesDao {
+interface EntryDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addEntries(entries: List<Entry>)

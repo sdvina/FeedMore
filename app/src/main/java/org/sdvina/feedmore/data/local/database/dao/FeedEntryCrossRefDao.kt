@@ -4,7 +4,7 @@ import androidx.room.*
 import org.sdvina.feedmore.data.local.database.entity.FeedEntryCrossRef
 import org.sdvina.feedmore.data.local.database.entity.Entry
 
-interface FeedEntryCrossRefsDao {
+interface FeedEntryCrossRefDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addFeedEntryCrossRefs(crossRefs: List<FeedEntryCrossRef>)
