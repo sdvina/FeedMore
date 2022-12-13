@@ -6,6 +6,6 @@ data class FeedLite(
     val url: String,
     var title: String,
     @ColumnInfo(name = "image_url") val imageUrl: String?,
-    var category: String = "Uncategorized",
+    var category: String,
     @ColumnInfo(name = "unread_count") var unreadCount: Int
 )

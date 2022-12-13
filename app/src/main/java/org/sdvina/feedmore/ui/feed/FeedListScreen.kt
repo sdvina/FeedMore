@@ -1,37 +1,42 @@
 package org.sdvina.feedmore.ui.feed
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.RssFeed
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.sdvina.feedmore.R
+import org.sdvina.feedmore.data.model.feed.FeedLite
+import org.sdvina.feedmore.ui.AppDestinations
+
+
 
 @Composable
-fun FeedListScreen() {
+fun ManageableFeedList(
+    navController: NavController,
+) {
 
 }
+
+
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -41,38 +46,63 @@ fun DrawerFeedList(
     modifier: Modifier = Modifier,
     viewModel: FeedViewModel
 ){
-    val openedCategories = remember { emptySet<String>() }
     val viewState by viewModel.sate.collectAsStateWithLifecycle()
+    val feedLites = viewState.feedLites
+    val defaultCategory = "Uncategorized"
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        FeedCategoryItem(
-            label = stringResource(R.string.uncategorized),
-            entryCount = "100"
-        )
-        viewState.feedLites.forEach{ feedLite ->
-            FeedItem(
-                icon = Icons.Filled.RssFeed,
-                label = feedLite.title
+        val categories = mutableSetOf<String>()
+        feedLites.forEach { if(it.category != defaultCategory) categories.add(it.category) }
+        val defaultSection = feedLites.filter { it.category == defaultCategory }
+        val otherSection = feedLites.filter { it.category != defaultCategory }
+        if(defaultSection.isNotEmpty()){
+            var sectionUnreadCount = 0
+            defaultSection.forEach { sectionUnreadCount += it.unreadCount }
+            FeedSection(
+                navController = navController,
+                closeDrawer = closeDrawer,
+                label = stringResource(R.string.uncategorized),
+                unreadCount = sectionUnreadCount,
+                section = defaultSection
+            )
+        }
+        categories.forEach { category ->
+            val section = otherSection.filter { it.category == category }
+            var sectionUnreadCount = 0
+            section.forEach { sectionUnreadCount += it.unreadCount }
+            FeedSection (
+                navController = navController,
+                closeDrawer = closeDrawer,
+                label = category,
+                unreadCount = sectionUnreadCount,
+                section = section
             )
         }
     }
 }
 
 @Composable
-fun FeedCategoryItem(
+fun FeedSection(
+    navController: NavController,
+    closeDrawer: () -> Unit,
     label: String = "",
-    entryCount: String = ""
+    unreadCount: Int,
+    section: List<FeedLite>
 ) {
+    var isOpen by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-            // TODO
-        }
+            .clickable { isOpen = !isOpen }
     ){
-        Icon(imageVector = Icons.Filled.ExpandLess, modifier = Modifier.padding(16.dp), contentDescription = null)
+        Icon(imageVector = when(isOpen) {
+            true -> Icons.Filled.ExpandLess
+            false -> Icons.Filled.ExpandMore
+        },
+            modifier = Modifier.padding(16.dp),
+            contentDescription = null)
         Text(
             text = label,
             letterSpacing = 0.7.sp,
@@ -82,13 +112,24 @@ fun FeedCategoryItem(
                 .align(Alignment.CenterVertically)
                 .padding(start = 8.dp),
         )
-        if (entryCount.isNotEmpty()) {
+        if (!isOpen && unreadCount != 0) {
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(16.dp),
-                text = entryCount,
+                text = unreadCount.toString(),
                 textAlign = TextAlign.Start
+            )
+        }
+    }
+    if(isOpen) {
+        section.forEach {
+            FeedItem(
+                navController = navController,
+                closeDrawer = closeDrawer,
+                imageUrl = it.imageUrl,
+                label = it.category,
+                unreadCount = it.unreadCount
             )
         }
     }
@@ -96,19 +137,35 @@ fun FeedCategoryItem(
 
 @Composable
 fun FeedItem(
-    icon: ImageVector,
+    navController: NavController,
+    closeDrawer: () -> Unit,
+    imageUrl: String?,
     label: String,
-    entryCount: String = ""
+    unreadCount: Int
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-            // TODO
-        }
+                navController.navigate(AppDestinations.ENTRY_LIST_ROUTE) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                closeDrawer()
+            }
     ) {
-        Icon(imageVector = icon, modifier = Modifier.padding(16.dp), contentDescription = null)
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .placeholder(R.drawable.feed_icon_small)
+                .data(imageUrl)
+                .size(18, 18)
+                .build(),
+            contentDescription = null,
+            modifier = Modifier
+                .size(18.dp, 18.dp)
+                .padding(16.dp),
+            contentScale = ContentScale.Crop
+        )
         Text(
             modifier = Modifier
                 .weight(1f)
@@ -120,12 +177,12 @@ fun FeedItem(
             fontSize = 14.sp,
             textAlign = TextAlign.Start
         )
-        if (entryCount.isNotEmpty()) {
+        if (unreadCount != 0) {
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(16.dp),
-                text = entryCount,
+                text = unreadCount.toString(),
                 textAlign = TextAlign.Start
             )
         }

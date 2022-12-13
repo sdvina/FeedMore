@@ -16,6 +16,7 @@
     <string name="cd_feed_info">Feed Info</string>
     <string name="cd_visit_website">Visit Website</string>
     <string name="cd_remove_feed">Remove Feed</string>
+    <string name="cd_back">Back</string>
 
     <string name="item_filter">Filter</string>
     <string name="item_mark_all_as_read">Mark All as Read</string>
@@ -25,6 +26,10 @@
     <string name="item_feed_info">Feed Info</string>
     <string name="item_visit_website">Visit Website</string>
     <string name="item_remove_feed">Remove Feed</string>
+    <string name="item_sort">Sort</string>
+    <string name="item_export_opml">Export OPML</string>
+    <string name="item_edit">Edit</string>
+    <string name="item_delete">Delete</string>
 
     <string name="add_feeds">Add Feeds</string>
     <string name="manage_feeds">Manage Feeds</string>
@@ -33,4 +38,12 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="uncategorized">Uncategorized</string>
+
+    <string name="check_all">Check All</string>
+    <string name="feeds_selected">%d selected</string>
+
+    <string name="add_feed_by_url">Add Feed by Url</string>
+    <string name="import_opml">Import OPML</string>
+    <string name="add_feed_by_radar">Add Feed by Radar</string>
+
 </resources>

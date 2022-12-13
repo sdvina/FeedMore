@@ -175,9 +175,7 @@ fun EntryScreenPreview(){
         EntryListScreen(
             openDrawer = {},
             navController = rememberAnimatedNavController(),
-            entryViewModel = viewModel(
-                factory = EntryViewModel.provideFactory(FeedMoreRepository.get())
-            )
+            entryViewModel = viewModel(factory = EntryViewModel.provideFactory(FeedMoreRepository.get()))
         )
     }
 }

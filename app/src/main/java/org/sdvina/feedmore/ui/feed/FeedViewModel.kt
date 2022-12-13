@@ -9,11 +9,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.model.feed.FeedLite
+import org.sdvina.feedmore.data.model.feed.FeedManageable
+import org.sdvina.feedmore.data.model.feed.FeedWithCategory
 import org.sdvina.feedmore.repository.FeedMoreRepository
 import org.sdvina.feedmore.ui.entry.EntryViewModel
 
 data class FeedViewState(
     val feedLites: List<FeedLite> = emptyList(),
+    val feedsManageable: List<FeedManageable> = emptyList(),
+    val feedUrlsWithCategories: List<FeedWithCategory> = emptyList(),
     val openedFeedUrl: String? = null,
     val selectedFeedUrls: Set<String>? = null,
     val refreshing: Boolean = false
@@ -32,11 +36,15 @@ class FeedViewModel(
         viewModelScope.launch {
             combine(
                 repository.getFeedLites(),
+                repository.getFeedsManageable(),
+                repository.getFeedUrlsWithCategories(),
                 refreshing,
                 _selectedFeedUrls
-            ) { feedLites, refreshing, selectedFeedUrls ->
+            ) { feedLites, feedsManageable, feedUrlsWithCategories, refreshing, selectedFeedUrls ->
                 FeedViewState(
                     feedLites = feedLites,
+                    feedsManageable = feedsManageable,
+                    feedUrlsWithCategories = feedUrlsWithCategories,
                     refreshing = refreshing,
                     selectedFeedUrls = selectedFeedUrls
                 )

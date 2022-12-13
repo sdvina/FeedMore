@@ -29,9 +29,9 @@ class FeedMoreRepository private constructor(
 
     fun getFeedUrls(): LiveData<List<String>> = dao.getFeedUrls()
 
-    fun getFeedUrlsWithCategories(): LiveData<List<FeedWithCategory>> = dao.getFeedUrlsWithCategories()
+    fun getFeedUrlsWithCategories(): Flow<List<FeedWithCategory>> = dao.getFeedUrlsWithCategories()
 
-    fun getFeedsManageable(): LiveData<List<FeedManageable>> = dao.getFeedsManageable()
+    fun getFeedsManageable(): Flow<List<FeedManageable>> = dao.getFeedsManageable()
 
     fun getEntry(entryUrl: String): LiveData<Entry?> = dao.getEntry(entryUrl)
 

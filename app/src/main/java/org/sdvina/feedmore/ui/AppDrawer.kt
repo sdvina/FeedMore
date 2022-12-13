@@ -76,17 +76,21 @@ fun AppDrawer(
             }
             closeDrawer()
         }}
-        // EntryLiteList
         item {
-            val viewModel: FeedViewModel = viewModel(
-                factory = FeedViewModel.provideFactory(repository)
-            )
+            val viewModel: FeedViewModel = viewModel( factory = FeedViewModel.provideFactory(repository) )
             DrawerFeedList(
                 navController = navController,
                 closeDrawer = closeDrawer,
                 viewModel = viewModel
             )
         }
+        item { DrawerButton(icon = Icons.Filled.Settings, label = stringResource(R.string.settings)){
+            /*navController.navigate(AppDestinations.SETTINGS_ROUTE) {
+                launchSingleTop = true
+                restoreState = true
+            }*/
+            closeDrawer()
+        }}
         item { DrawerButton(icon = Icons.Filled.Info, label = stringResource(R.string.about)){
             navController.navigate(AppDestinations.ABOUT_ROUTE) {
                 launchSingleTop = true

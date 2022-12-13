@@ -20,13 +20,13 @@ interface FeedDao {
     fun getFeedLites(): Flow<List<FeedLite>>
 
     @Query("SELECT url, title, website, image_url, description, category FROM feed")
-    fun getFeedsManageable(): LiveData<List<FeedManageable>>
+    fun getFeedsManageable(): Flow<List<FeedManageable>>
 
     @Query("SELECT url FROM feed")
     fun getFeedUrls(): LiveData<List<String>>
 
     @Query("SELECT url, category FROM feed")
-    fun getFeedUrlsWithCategories(): LiveData<List<FeedWithCategory>>
+    fun getFeedUrlsWithCategories(): Flow<List<FeedWithCategory>>
 
     @Update
     fun updateFeed(feed: Feed)
