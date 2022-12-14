@@ -25,7 +25,7 @@ import coil.request.ImageRequest
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.ui.components.BookmarkButton
-import org.sdvina.feedmore.ui.theme.FeedMoreTheme
+import org.sdvina.feedmore.ui.theme.AppTheme
 import java.util.Date
 
 @Composable
@@ -129,7 +129,7 @@ fun EntryItemImagePreview(){
 @Preview
 @Composable
 fun EntryItemCardPreview(){
-    FeedMoreTheme {
+    AppTheme {
         EntryItemCard(entryItem = EntryLite(
             url = "xxx",
             title = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",

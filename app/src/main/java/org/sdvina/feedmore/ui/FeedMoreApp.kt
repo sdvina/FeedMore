@@ -11,16 +11,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.FeedMoreRepository
-import org.sdvina.feedmore.ui.theme.FeedMoreTheme
+import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.utils.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun FeedMoreApp(
-    repository: FeedMoreRepository
+    repository: AppRepository
 ) {
-    FeedMoreTheme {
+    AppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -50,8 +50,8 @@ fun FeedMoreApp(
 @Composable
 fun FeedMoreAppPreview() {
     AppDataBaseHelper.onCreate(LocalContext.current)
-    FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
-    FeedMoreTheme {
-        FeedMoreApp(repository = FeedMoreRepository.get())
+    AppRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
+    AppTheme {
+        FeedMoreApp(repository = AppRepository.get())
     }
 }

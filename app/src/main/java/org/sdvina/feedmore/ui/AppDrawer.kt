@@ -28,11 +28,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.FeedMoreRepository
-import org.sdvina.feedmore.ui.entry.EntryViewModel
+import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.ui.feed.DrawerFeedList
 import org.sdvina.feedmore.ui.feed.FeedViewModel
 import org.sdvina.feedmore.utils.NetworkMonitor
@@ -42,7 +40,7 @@ fun AppDrawer(
     navController: NavController,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier,
-    repository: FeedMoreRepository
+    repository: AppRepository
 ) {
 
     LazyColumn(modifier = modifier) {
@@ -130,11 +128,11 @@ fun DrawerButton(
 @Composable
 fun AppDrawerPreview(){
     AppDataBaseHelper.onCreate(LocalContext.current)
-    FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
+    AppRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
     AppDrawer(
         navController = rememberNavController(),
         closeDrawer = { /*TODO*/ },
-        repository = FeedMoreRepository.get()
+        repository = AppRepository.get()
     )
 }
 

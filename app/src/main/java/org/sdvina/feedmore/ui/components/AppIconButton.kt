@@ -15,7 +15,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import org.sdvina.feedmore.R
-import org.sdvina.feedmore.ui.theme.FeedMoreTheme
+import org.sdvina.feedmore.ui.theme.AppTheme
 
 @Composable
 fun BookmarkButton(
@@ -85,7 +85,7 @@ fun MoreActionsButton(content:  @Composable (ColumnScope.() -> Unit)) {
 @Preview
 @Composable
 fun MoreActionsButtonPreview(){
-    FeedMoreTheme {
+    AppTheme {
         MoreActionsButton {
             DropdownMenuItem(
                 text = { Text("Edit") },

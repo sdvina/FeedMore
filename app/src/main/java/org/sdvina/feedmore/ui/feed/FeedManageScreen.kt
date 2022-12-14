@@ -1,6 +1,5 @@
 package org.sdvina.feedmore.ui.feed
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -11,16 +10,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.data.model.feed.FeedManageable
-import org.sdvina.feedmore.repository.FeedMoreRepository
+import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.ui.components.MoreActionsButton
-import org.sdvina.feedmore.ui.entry.EntryViewModel
 import org.sdvina.feedmore.utils.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
@@ -147,9 +144,9 @@ fun ManageableFeedList(
 @Composable
 fun FeedManageScreenPreview(){
     AppDataBaseHelper.onCreate(LocalContext.current)
-    FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
+    AppRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
     FeedManageScreen(
         openDrawer = { },
-        viewModel = viewModel(factory = FeedViewModel.provideFactory(FeedMoreRepository.get()))
+        viewModel = viewModel(factory = FeedViewModel.provideFactory(AppRepository.get()))
     )
 }

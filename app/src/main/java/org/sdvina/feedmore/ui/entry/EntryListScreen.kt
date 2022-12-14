@@ -23,10 +23,10 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.ui.components.MoreActionsButton
-import org.sdvina.feedmore.ui.theme.FeedMoreTheme
+import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.FeedMoreRepository
+import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.utils.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
@@ -169,13 +169,13 @@ fun SwipeRefreshScreen(
 @Preview
 @Composable
 fun EntryScreenPreview(){
-    FeedMoreTheme {
+    AppTheme {
         AppDataBaseHelper.onCreate(LocalContext.current)
-        FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
+        AppRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
         EntryListScreen(
             openDrawer = {},
             navController = rememberAnimatedNavController(),
-            entryViewModel = viewModel(factory = EntryViewModel.provideFactory(FeedMoreRepository.get()))
+            entryViewModel = viewModel(factory = EntryViewModel.provideFactory(AppRepository.get()))
         )
     }
 }

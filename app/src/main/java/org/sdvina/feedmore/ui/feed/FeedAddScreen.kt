@@ -1,5 +1,7 @@
 package org.sdvina.feedmore.ui.feed
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,8 +24,8 @@ import androidx.navigation.NavController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.FeedMoreRepository
-import org.sdvina.feedmore.ui.theme.FeedMoreTheme
+import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.utils.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
@@ -51,7 +52,11 @@ fun FeedAddScreen(
         }
     ){ innerPadding ->
         val viewState by viewModel.sate.collectAsStateWithLifecycle()
-        var operator by remember { mutableStateOf(0) }
+        val operator = remember { mutableStateOf(0) }
+        val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(), onResult = { uri ->
+            operator.value = 0
+            uri?.let { viewModel.importOmpl(it) }
+        })
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -59,34 +64,116 @@ fun FeedAddScreen(
         ) {
             OperatorItem(
                 label = stringResource(R.string.add_feed_by_url),
-                imageVector = Icons.Filled.Link) {
-                operator = 1
-            }
+                imageVector = Icons.Filled.Link
+            ) { operator.value = 1 }
             OperatorItem(
                 label = stringResource(R.string.import_opml),
-                imageVector = Icons.Filled.Upload) {
-                operator = 2
-            }
+                imageVector = Icons.Filled.Upload
+            ) { operator.value = 2 }
             OperatorItem(
                 label = stringResource(R.string.add_feed_by_radar),
-                imageVector = Icons.Filled.Radar) {
-                operator = 3
-            }
+                imageVector = Icons.Filled.Radar
+            ) { operator.value = 3 }
 
-            when(operator) {
+            when(operator.value) {
                 1 -> {
-                    AddFeedByUrl(Modifier.padding(innerPadding))
-                    operator = 0
+                    AddFeedByUrlDialog(
+                        operator = operator,
+                        onSubmit = { viewModel.addFeedByUrl(it) }
+                    )
+                }
+                2 -> { launcher.launch("document/*.opml") }
+                3 -> {
+                    AddFeedByRadarDialog(
+                        operator = operator,
+                        onSubmit = { /** TODO */ }
+                    )
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddFeedByUrlDialog(operator: MutableState<Int>,  onSubmit: (String) -> Unit) {
+    var alertDialog by remember { mutableStateOf(true) }
+    if(!alertDialog)  operator.value = 0
+    if (alertDialog) {
+        var text by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { alertDialog = false },
+            title = {
+                OperatorItem(
+                    label = stringResource(R.string.add_feed_by_url),
+                    imageVector = Icons.Filled.Link,
+                    onClick = { }
+                )
+            },
+            text= {
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text(text = "URL") },
+                    placeholder = { Text(text = "Please input a feed url") },
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { onSubmit(text)}
+                ) { Text(text = stringResource(R.string.submit)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { alertDialog = false }) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddFeedByRadarDialog(operator: MutableState<Int>, onSubmit: (String) -> Unit) {
+    var alertDialog by remember { mutableStateOf(true) }
+    if(!alertDialog)  operator.value = 0
+    if (alertDialog) {
+        var text by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { alertDialog = false },
+            title = {
+                OperatorItem(
+                    label = stringResource(R.string.add_feed_by_radar),
+                    imageVector = Icons.Filled.Radar,
+                    onClick = { }
+                )
+            },
+            text= {
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text(text = "URL") },
+                    placeholder = { Text(text = "Please input a website url to scan") },
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { onSubmit(text) }
+                ) { Text(text = stringResource(R.string.submit)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { alertDialog = false }) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
 @Composable
 fun OperatorItem(
-    label: String,
     imageVector: ImageVector,
+    label: String,
     onClick: () -> Unit
 ){
     Row(
@@ -112,25 +199,16 @@ fun OperatorItem(
     }
 }
 
-@Composable
-fun AddFeedByUrl(modifier: Modifier){
-    Text(text = "1111111111")
-    Snackbar(modifier = modifier) {
-        OperatorItem(label="", imageVector = Icons.Filled.Link, {})
-        Divider()
-    }
-}
-
 @OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
 fun FeedAddScreenPreview(){
     AppDataBaseHelper.onCreate(LocalContext.current)
-    FeedMoreRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
-    FeedMoreTheme {
+    AppRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
+    AppTheme {
         FeedAddScreen(
            navController = rememberAnimatedNavController(),
-            viewModel = viewModel(factory = FeedViewModel.provideFactory(FeedMoreRepository.get()))
+            viewModel = viewModel(factory = FeedViewModel.provideFactory(AppRepository.get()))
         )
     }
 }

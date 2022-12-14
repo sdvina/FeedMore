@@ -1,5 +1,6 @@
 package org.sdvina.feedmore.ui.feed
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,8 +12,7 @@ import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.model.feed.FeedLite
 import org.sdvina.feedmore.data.model.feed.FeedManageable
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
-import org.sdvina.feedmore.repository.FeedMoreRepository
-import org.sdvina.feedmore.ui.entry.EntryViewModel
+import org.sdvina.feedmore.repository.AppRepository
 
 data class FeedViewState(
     val feedLites: List<FeedLite> = emptyList(),
@@ -24,7 +24,7 @@ data class FeedViewState(
 )
 
 class FeedViewModel(
-    private val repository: FeedMoreRepository
+    private val repository: AppRepository
 ): ViewModel() {
     private val _selectedFeedUrls = MutableStateFlow<Set<String>?>(null)
     private val refreshing = MutableStateFlow(false)
@@ -58,12 +58,21 @@ class FeedViewModel(
         _selectedFeedUrls.value = setOf(*feedUrl)
     }
 
-    fun deleteFeeds(vararg feedUrl: String){
+    fun deleteFeeds(vararg feedUrl: String) {
     }
 
+    fun addFeedByUrl(feedUrl: String) {
+
+    }
+
+    fun importOmpl(uri: Uri) {
+        viewModelScope.launch {
+            //repository.addFolder(folderUri)
+        }
+    }
     companion object {
         fun provideFactory(
-            repository: FeedMoreRepository
+            repository: AppRepository
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

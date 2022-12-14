@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.AppPreferences
 import org.sdvina.feedmore.data.model.entry.EntryLite
-import org.sdvina.feedmore.repository.FeedMoreRepository
+import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.utils.ErrorMessage
 
 data class EntryViewState(
@@ -22,7 +22,7 @@ data class EntryViewState(
 )
 
 class EntryViewModel(
-    private val repository: FeedMoreRepository
+    private val repository: AppRepository
 ): ViewModel() {
     private val pagingConfig = PagingConfig(pageSize = 20)
     private val refreshing = MutableStateFlow(false)
@@ -89,7 +89,7 @@ class EntryViewModel(
 
     companion object {
         fun provideFactory(
-            repository: FeedMoreRepository
+            repository: AppRepository
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

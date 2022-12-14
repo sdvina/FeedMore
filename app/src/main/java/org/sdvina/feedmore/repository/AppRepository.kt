@@ -15,7 +15,7 @@ import org.sdvina.feedmore.data.model.feed.FeedManageable
 import org.sdvina.feedmore.utils.NetworkMonitor
 import java.util.concurrent.Executors
 
-class FeedMoreRepository private constructor(
+class AppRepository private constructor(
     database: AppDatabase,
     val networkMonitor: NetworkMonitor
 ) {
@@ -110,13 +110,13 @@ class FeedMoreRepository private constructor(
     }
 
     companion object {
-        private var INSTANCE: FeedMoreRepository? = null
+        private var INSTANCE: AppRepository? = null
 
         fun init(database: AppDatabase, networkMonitor: NetworkMonitor) {
-            if (INSTANCE == null) INSTANCE = FeedMoreRepository(database, networkMonitor)
+            if (INSTANCE == null) INSTANCE = AppRepository(database, networkMonitor)
         }
 
-        fun get(): FeedMoreRepository {
+        fun get(): AppRepository {
             return INSTANCE ?: throw IllegalStateException("Repository must be initialized!")
         }
     }

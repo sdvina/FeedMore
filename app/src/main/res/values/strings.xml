@@ -45,5 +45,11 @@
     <string name="add_feed_by_url">Add Feed by Url</string>
     <string name="import_opml">Import OPML</string>
     <string name="add_feed_by_radar">Add Feed by Radar</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="confirm">Confirm</string>
+
+
 
 </resources>
