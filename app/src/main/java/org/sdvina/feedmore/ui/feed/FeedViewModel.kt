@@ -9,9 +9,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.sdvina.feedmore.data.local.database.entity.Feed
 import org.sdvina.feedmore.data.model.feed.FeedLite
 import org.sdvina.feedmore.data.model.feed.FeedManageable
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
+import org.sdvina.feedmore.data.remote.FeedFetcher
 import org.sdvina.feedmore.repository.AppRepository
 
 data class FeedViewState(
@@ -20,6 +22,7 @@ data class FeedViewState(
     val feedUrlsWithCategories: List<FeedWithCategory> = emptyList(),
     val openedFeedUrl: String? = null,
     val selectedFeedUrls: Set<String>? = null,
+    val messages: List<Pair<Long, String>> = emptyList(),
     val refreshing: Boolean = false
 )
 
@@ -29,6 +32,7 @@ class FeedViewModel(
     private val _selectedFeedUrls = MutableStateFlow<Set<String>?>(null)
     private val refreshing = MutableStateFlow(false)
     private var _state = MutableStateFlow(FeedViewState())
+    private val fetcher = FeedFetcher()
     val sate: StateFlow<FeedViewState>
         get() = _state
 
@@ -61,7 +65,14 @@ class FeedViewModel(
     fun deleteFeeds(vararg feedUrl: String) {
     }
 
-    fun addFeedByUrl(feedUrl: String) {
+    fun addFeeds(vararg feed: Feed) {
+        repository.addFeeds(*feed)
+    }
+
+    fun requestUrl(feedUrl: String) {
+        viewModelScope.launch {
+            fetcher.request(feedUrl)
+        }
 
     }
 

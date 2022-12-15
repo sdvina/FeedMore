@@ -27,7 +27,7 @@ import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.repository.AppRepository
-import org.sdvina.feedmore.utils.NetworkMonitor
+import org.sdvina.feedmore.util.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable

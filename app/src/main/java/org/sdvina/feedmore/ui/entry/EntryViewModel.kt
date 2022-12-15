@@ -9,15 +9,14 @@ import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.AppPreferences
 import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.repository.AppRepository
-import org.sdvina.feedmore.utils.ErrorMessage
 
 data class EntryViewState(
     val entryLites: PagingData<EntryLite> = PagingData.empty(),
     val selectedEntryUrl: String? = null,
     val isEntryOpen: Boolean = false,
     val favorites: Set<String> = emptySet(),
+    val messages: List<Map<Long, String>> = listOf(),
     val refreshing: Boolean = false,
-    val errorMessages: List<ErrorMessage> = emptyList(),
     val searchInput: String = "",
 )
 
@@ -70,10 +69,10 @@ class EntryViewModel(
         return emptyFlow()
     }
 
-    fun errorShown(errorId: Long) {
+    fun showMessage(messageId: Long) {
         _state.update { currentState ->
-            val errorMessages = currentState.errorMessages.filterNot { it.id == errorId }
-            currentState.copy(errorMessages = errorMessages)
+            val messages = currentState.messages.filterNot {it.containsKey(messageId)}
+            currentState.copy(messages = messages)
         }
     }
 

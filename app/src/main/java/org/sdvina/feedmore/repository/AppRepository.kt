@@ -12,7 +12,7 @@ import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
 import org.sdvina.feedmore.data.model.feed.FeedLite
 import org.sdvina.feedmore.data.model.feed.FeedManageable
-import org.sdvina.feedmore.utils.NetworkMonitor
+import org.sdvina.feedmore.util.NetworkMonitor
 import java.util.concurrent.Executors
 
 class AppRepository private constructor(

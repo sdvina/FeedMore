@@ -33,7 +33,7 @@ import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.ui.feed.DrawerFeedList
 import org.sdvina.feedmore.ui.feed.FeedViewModel
-import org.sdvina.feedmore.utils.NetworkMonitor
+import org.sdvina.feedmore.util.NetworkMonitor
 
 @Composable
 fun AppDrawer(

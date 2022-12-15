@@ -17,16 +17,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import kotlinx.coroutines.launch
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.ui.theme.AppTheme
-import org.sdvina.feedmore.utils.NetworkMonitor
+import org.sdvina.feedmore.util.NetworkMonitor
+import org.sdvina.feedmore.util.OpmlImporter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -34,6 +37,22 @@ fun FeedAddScreen(
     navController: NavController,
     viewModel: FeedViewModel
 ){
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val viewState by viewModel.sate.collectAsStateWithLifecycle()
+    if(viewState.messages.isNotEmpty()){
+        val message = remember(viewState){ viewState.messages[0] }
+        LaunchedEffect(message, snackbarHostState) {
+            val snackbarResult = snackbarHostState.showSnackbar(
+                message = message.val,
+                actionLabel = retryMessageText
+            )
+            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                onRefreshPostsState()
+            }
+        }
+    }
+
     Scaffold (
         topBar = {
             TopAppBar(
@@ -49,14 +68,18 @@ fun FeedAddScreen(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ){ innerPadding ->
-        val viewState by viewModel.sate.collectAsStateWithLifecycle()
         val operator = remember { mutableStateOf(0) }
         val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(), onResult = { uri ->
             operator.value = 0
             uri?.let { viewModel.importOmpl(it) }
         })
+        //val opmlImporter = OpmlImporter(LocalContext.current, )
+        val messages = mutableMapOf(
+            Pair(R.string.msg_add_feed_url, stringResource(R.string.msg_add_feed_url))
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,7 +102,13 @@ fun FeedAddScreen(
                 1 -> {
                     AddFeedByUrlDialog(
                         operator = operator,
-                        onSubmit = { viewModel.addFeedByUrl(it) }
+                        onSubmit = {
+                            viewModel.requestUrl(it)
+                            scope.launch {
+                                messages.get(R.string.msg_add_feed_url)
+                                    ?.let { it1 -> snackbarHostState.showSnackbar(it1) }
+                            }
+                        }
                     )
                 }
                 2 -> { launcher.launch("document/*.opml") }
@@ -120,7 +149,10 @@ fun AddFeedByUrlDialog(operator: MutableState<Int>,  onSubmit: (String) -> Unit)
             },
             confirmButton = {
                 TextButton(
-                    onClick = { onSubmit(text)}
+                    onClick = {
+                        onSubmit(text)
+                        alertDialog = false
+                    }
                 ) { Text(text = stringResource(R.string.submit)) }
             },
             dismissButton = {

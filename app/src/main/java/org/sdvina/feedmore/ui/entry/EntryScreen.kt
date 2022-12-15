@@ -29,7 +29,7 @@ import org.sdvina.feedmore.repository.AppRepository
 import org.sdvina.feedmore.ui.components.BookmarkButton
 import org.sdvina.feedmore.ui.components.MoreActionsButton
 import org.sdvina.feedmore.ui.theme.AppTheme
-import org.sdvina.feedmore.utils.NetworkMonitor
+import org.sdvina.feedmore.util.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable

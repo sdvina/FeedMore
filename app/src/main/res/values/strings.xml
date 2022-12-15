@@ -67,6 +67,9 @@
     <string name="error_else">
         Please try again after some time.
     </string>
+    <string name="msg_add_feed_url">
+        Add feed url %s
+    </string>
 
 
 
