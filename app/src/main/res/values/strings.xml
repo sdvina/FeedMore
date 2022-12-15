@@ -17,6 +17,8 @@
     <string name="cd_visit_website">Visit Website</string>
     <string name="cd_remove_feed">Remove Feed</string>
     <string name="cd_back">Back</string>
+    <string name="cd_error_webpage">Error Webpage</string>
+    <string name="cd_open_in_browser">Open in Browser</string>
 
     <string name="item_filter">Filter</string>
     <string name="item_mark_all_as_read">Mark All as Read</string>
@@ -30,6 +32,9 @@
     <string name="item_export_opml">Export OPML</string>
     <string name="item_edit">Edit</string>
     <string name="item_delete">Delete</string>
+    <string name="item_share">Share</string>
+    <string name="item_copy_link">Copy Link</string>
+    <string name="item_change_text_size">Change Text Size</string>
 
     <string name="add_feeds">Add Feeds</string>
     <string name="manage_feeds">Manage Feeds</string>
@@ -49,6 +54,20 @@
     <string name="cancel">Cancel</string>
     <string name="dismiss">Dismiss</string>
     <string name="confirm">Confirm</string>
+
+    <string name="try_again">Try Again</string>
+
+    <!-- message -->
+    <string name="error_host_lookup">
+        The website not found! Maybe you are not connected to the Internet.
+    </string>
+    <string name="error_timeout">
+        Time out! Please try again.
+    </string>
+    <string name="error_else">
+        Please try again after some time.
+    </string>
+
 
 
 

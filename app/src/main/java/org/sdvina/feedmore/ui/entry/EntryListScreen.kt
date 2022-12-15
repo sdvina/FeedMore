@@ -168,7 +168,7 @@ fun SwipeRefreshScreen(
 @OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
-fun EntryScreenPreview(){
+fun EntryListScreenPreview(){
     AppTheme {
         AppDataBaseHelper.onCreate(LocalContext.current)
         AppRepository.init(AppDataBaseHelper.db, NetworkMonitor(LocalContext.current))
