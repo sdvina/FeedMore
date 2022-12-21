@@ -1,13 +1,11 @@
 package org.sdvina.feedmore.ui.feed
 
 import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.database.entity.Feed
 import org.sdvina.feedmore.data.model.feed.FeedLite
@@ -15,6 +13,7 @@ import org.sdvina.feedmore.data.model.feed.FeedManageable
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
 import org.sdvina.feedmore.data.remote.FeedFetcher
 import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.util.OpmlImporter
 
 data class FeedViewState(
     val feedLites: List<FeedLite> = emptyList(),
@@ -72,8 +71,8 @@ class FeedViewModel(
     fun requestUrl(feedUrl: String) {
         viewModelScope.launch {
             fetcher.request(feedUrl)
+            //_state.update { it.copy(messages = listOf(Pair(2L, "abc"))) }
         }
-
     }
 
     fun importOmpl(uri: Uri) {

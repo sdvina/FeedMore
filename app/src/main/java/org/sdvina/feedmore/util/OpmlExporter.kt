@@ -15,17 +15,13 @@ import java.util.*
 
 class OpmlExporter(
     context: Context,
-    private val listener: ExportResultListener
+    private val onExportAttempted: (isSuccessful: Boolean, fileName: String?) -> Unit
 ) {
 
     private val contentResolver = context.contentResolver
     private var feeds = listOf<FeedManageable>()
         get() = field.sortedByCategory()
     private var categories = arrayOf<String>()
-
-    interface ExportResultListener {
-        fun onExportAttempted(isSuccessful: Boolean, fileName: String?)
-    }
 
     fun submitFeeds(feeds: List<FeedManageable>) {
         this.feeds = feeds
@@ -34,6 +30,7 @@ class OpmlExporter(
 
     fun executeExport(uri: Uri) {
         val outputStream = contentResolver.openOutputStream(uri)
+        if (outputStream == null) onExportAttempted(false, null)
         if (outputStream != null) {
             try {
                 OutputStreamWriter(outputStream, Charsets.UTF_8).use { writer ->
@@ -42,15 +39,11 @@ class OpmlExporter(
 
                 contentResolver.query(uri, null, null, null, null)?.use { cursor ->
                     if (cursor.moveToFirst()) {
-                        val fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                        listener.onExportAttempted(true, fileName)
+                        val fileName = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                        onExportAttempted(true, fileName)
                     }
                 }
-            } catch (e: Exception) {
-                listener.onExportAttempted(false, null)
-            }
-        } else {
-            listener.onExportAttempted(false, null)
+            } catch (e: Exception) { onExportAttempted(false, null) }
         }
     }
 
@@ -61,7 +54,9 @@ class OpmlExporter(
             created = Date()
             outlines = categories.map { category ->
                 Outline(category, null, null).apply {
-                    children = feeds.filter { feed -> feed.category == category }.map { feed ->
+                    children = feeds.filter { feed ->
+                        feed.category == category
+                    }.map { feed ->
                         Outline(feed.title, URL(feed.url), URL(feed.website))
                     }
                 }

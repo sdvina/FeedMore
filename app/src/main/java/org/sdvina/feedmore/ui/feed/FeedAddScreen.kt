@@ -43,12 +43,9 @@ fun FeedAddScreen(
     if(viewState.messages.isNotEmpty()){
         val message = remember(viewState){ viewState.messages[0] }
         LaunchedEffect(message, snackbarHostState) {
-            val snackbarResult = snackbarHostState.showSnackbar(
-                message = message.val,
-                actionLabel = retryMessageText
-            )
+            val snackbarResult = snackbarHostState.showSnackbar( message = message.second)
             if (snackbarResult == SnackbarResult.ActionPerformed) {
-                onRefreshPostsState()
+                // TODO
             }
         }
     }
@@ -105,8 +102,7 @@ fun FeedAddScreen(
                         onSubmit = {
                             viewModel.requestUrl(it)
                             scope.launch {
-                                messages.get(R.string.msg_add_feed_url)
-                                    ?.let { it1 -> snackbarHostState.showSnackbar(it1) }
+                                snackbarHostState.showSnackbar("121")
                             }
                         }
                     )
