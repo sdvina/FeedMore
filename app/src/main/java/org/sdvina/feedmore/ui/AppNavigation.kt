@@ -10,7 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.data.AppRepository
 import org.sdvina.feedmore.ui.entry.EntryListScreen
 import org.sdvina.feedmore.ui.entry.EntryViewModel
 

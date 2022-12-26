@@ -28,6 +28,12 @@ interface FeedDao {
     @Query("SELECT url, category FROM feed")
     fun getFeedUrlsWithCategories(): Flow<List<FeedWithCategory>>
 
+    @Query("SELECT url FROM Feed")
+    fun getFeedUrlsSynchronously(): List<String>
+
+    @Query("SELECT title FROM Feed WHERE url = :feedUrl")
+    fun getFeedTitleSynchronously(feedUrl: String): String
+
     @Update
     fun updateFeed(feed: Feed)
 

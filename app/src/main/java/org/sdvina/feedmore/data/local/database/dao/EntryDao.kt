@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import org.sdvina.feedmore.data.local.database.entity.Entry
 import org.sdvina.feedmore.data.model.entry.EntryLite
+import org.sdvina.feedmore.data.model.entry.EntryToggleable
 
 interface EntryDao {
 
@@ -37,6 +38,14 @@ interface EntryDao {
 
     @Query("UPDATE entry SET is_read = :isRead WHERE url IN (:entryUrl)")
     fun updateEntryIsRead(vararg entryUrl: String, isRead: Boolean)
+
+    @Query(
+        "SELECT entry.url, is_favorite, is_read " +
+                "FROM entry " +
+                "INNER JOIN feed_entry ON (feed_entry.entry_url = Entry.url) " +
+                "WHERE feed_entry.feed_url = :feedUrl"
+    )
+    fun getEntriesToggleableByFeedSynchronously(feedUrl: String): List<EntryToggleable>
 
     @Delete
     fun deleteEntries(entries: List<Entry>)

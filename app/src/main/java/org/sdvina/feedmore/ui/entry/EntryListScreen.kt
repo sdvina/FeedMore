@@ -3,6 +3,8 @@ package org.sdvina.feedmore.ui.entry
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -17,16 +19,23 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.ui.components.MoreActionsButton
 import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.data.AppRepository
+import org.sdvina.feedmore.data.local.AppPreferences
+import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.util.NetworkMonitor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
@@ -118,6 +127,7 @@ fun EntryListScreen(
     ){ innerPadding ->
         val contentModifier = Modifier.padding(innerPadding)
         SwipeRefreshScreen(
+            entryLites = entryViewModel.getEntryLiteFlow("https://zhihu.com/rss").collectAsLazyPagingItems(),
             modifier = contentModifier,
             isRefreshing = isRefreshing.value,
             onRefresh = {
@@ -132,33 +142,30 @@ fun EntryListScreen(
     }
 }
 
-
-
-
 @Composable
 fun SwipeRefreshScreen(
+    entryLites: LazyPagingItems<EntryLite>,
     modifier: Modifier = Modifier,
     isRefreshing: Boolean = false,
     onRefresh: () -> Unit = {},
 ) {
     val refreshState = rememberSwipeRefreshState(isRefreshing)
 
-    Column(
+    SwipeRefresh(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth(),
+        state = refreshState,
+        onRefresh = { onRefresh() }
     ) {
-        SwipeRefresh(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            state = refreshState,
-            onRefresh = { onRefresh() }
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp),
+            state = rememberLazyListState()
         ) {
-            LazyColumn(
-                Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp)
-            ) {
-
+            itemsIndexed(entryLites){_, entryLite ->
+                entryLite?.let {
+                    EntryItemCard(entryItem = entryLite)
+                }
             }
         }
     }

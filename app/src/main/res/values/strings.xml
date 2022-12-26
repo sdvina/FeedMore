@@ -56,6 +56,8 @@
     <string name="confirm">Confirm</string>
 
     <string name="try_again">Try Again</string>
+    <string name="and_more">%s… and more</string>
+    <string name="new_entries_notification_title">New in %s</string>
 
     <!-- message -->
     <string name="error_host_lookup">
@@ -68,10 +70,24 @@
         Please try again after some time.
     </string>
     <string name="msg_add_feed_url">
-        Add feed url %s
+        Subscribed to %s.
+    </string>
+    <string name="msg_unsubscribed">
+        Unsubscribed from %s.
     </string>
 
-
+    <plurals name="numberOfEntries">
+        <item quantity="one">1 entry</item>
+        <item quantity="other">%d entries</item>
+    </plurals>
+    <plurals name="numberOfNewEntries">
+        <item quantity="one">1 new entry</item>
+        <item quantity="other">%d new entries</item>
+    </plurals>
+    <plurals name="numberOfFeeds">
+        <item quantity="one">1 feed</item>
+        <item quantity="other">%d feeds</item>
+    </plurals>
 
 
 </resources>

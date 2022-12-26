@@ -12,17 +12,13 @@ import java.io.StringReader
 
 class OpmlImporter(
     context: Context,
-    private val listener: OnOpmlParsedListener
+    private val onOpmlParsed: (isSuccessful: Boolean, feeds: List<Feed>?) -> Unit
 ) {
     private val contentResolver = context.contentResolver
 
-    interface OnOpmlParsedListener {
-        fun onOpmlParsed(feeds: List<Feed>)
-        fun onParseOpmlFailed()
-    }
-
     fun submitUri(uri: Uri) {
         val inputStream = contentResolver.openInputStream(uri)
+        if (inputStream == null)  onOpmlParsed(false, null)
         if (inputStream != null) {
             try {
                 InputStreamReader(inputStream).use { reader -> parseOpml(reader) }
@@ -34,12 +30,8 @@ class OpmlImporter(
                         "<opml>"
                     ))
                     parseOpml(fixedReader)
-                } catch (e: Exception) {
-                    listener.onParseOpmlFailed()
-                }
+                } catch (e: Exception) { onOpmlParsed(false, null) }
             }
-        } else {
-            listener.onParseOpmlFailed()
         }
     }
 
@@ -48,6 +40,20 @@ class OpmlImporter(
         val opml = WireFeedInput().build(opmlReader) as Opml
 
         for (outline in opml.outlines) {
+            if(outline.xmlUrl == null) {
+                if (outline.children.isNotEmpty()) {
+                    for (child in outline.children.filterNot { it.xmlUrl.isNullOrEmpty() }) {
+                        val feed = Feed(
+                            url = child.xmlUrl,
+                            website = child.htmlUrl ?: child.xmlUrl,
+                            title = child.title ?: child.xmlUrl.substringAfter("://"),
+                            category = outline.title,
+                            unreadCount = 0
+                        )
+                        feeds.add(feed)
+                    }
+                }
+            }
             if (outline.xmlUrl != null) {
                 val feed = Feed(
                     url = outline.xmlUrl,
@@ -56,22 +62,8 @@ class OpmlImporter(
                     unreadCount = 0
                 )
                 feeds.add(feed)
-            } else {
-                val category = outline.title
-                if (outline.children.isNotEmpty()) {
-                    for (child in outline.children.filterNot { it.xmlUrl.isNullOrEmpty() }) {
-                        val feed = Feed(
-                            url = child.xmlUrl,
-                            website = child.htmlUrl ?: child.xmlUrl,
-                            title = child.title ?: child.xmlUrl.substringAfter("://"),
-                            category = category,
-                            unreadCount = 0
-                        )
-                        feeds.add(feed)
-                    }
-                }
             }
         }
-        listener.onOpmlParsed(feeds)
+        onOpmlParsed(true, feeds)
     }
 }

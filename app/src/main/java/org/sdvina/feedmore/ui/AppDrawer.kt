@@ -30,7 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.data.AppRepository
 import org.sdvina.feedmore.ui.feed.DrawerFeedList
 import org.sdvina.feedmore.ui.feed.FeedViewModel
 import org.sdvina.feedmore.util.NetworkMonitor

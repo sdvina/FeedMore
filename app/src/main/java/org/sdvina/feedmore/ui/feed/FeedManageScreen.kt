@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.data.model.feed.FeedManageable
-import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.data.AppRepository
 import org.sdvina.feedmore.ui.components.MoreActionsButton
 import org.sdvina.feedmore.util.NetworkMonitor
 

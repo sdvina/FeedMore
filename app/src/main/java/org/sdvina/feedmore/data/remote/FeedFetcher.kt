@@ -41,7 +41,7 @@ class FeedFetcher {
         return client.newCall(request)
     }
 
-    private fun requestSynchronously(url: String): FeedWithEntries? {
+    fun requestSynchronously(url: String): FeedWithEntries? {
         val call = createCall(url)
         call.execute().use { response ->
             try{

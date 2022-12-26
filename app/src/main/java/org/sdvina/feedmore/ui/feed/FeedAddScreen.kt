@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,7 +25,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.R
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
-import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.data.AppRepository
 import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.util.NetworkMonitor
 import org.sdvina.feedmore.util.OpmlImporter
@@ -39,17 +38,6 @@ fun FeedAddScreen(
 ){
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val viewState by viewModel.sate.collectAsStateWithLifecycle()
-    if(viewState.messages.isNotEmpty()){
-        val message = remember(viewState){ viewState.messages[0] }
-        LaunchedEffect(message, snackbarHostState) {
-            val snackbarResult = snackbarHostState.showSnackbar( message = message.second)
-            if (snackbarResult == SnackbarResult.ActionPerformed) {
-                // TODO
-            }
-        }
-    }
-
     Scaffold (
         topBar = {
             TopAppBar(
@@ -68,12 +56,17 @@ fun FeedAddScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ){ innerPadding ->
+        val viewState by viewModel.sate.collectAsStateWithLifecycle()
         val operator = remember { mutableStateOf(0) }
+        val opmlImporter = OpmlImporter(LocalContext.current) { isSuccessful, feeds ->
+            if(isSuccessful && feeds != null) {
+                viewModel.addFeeds(*feeds.toTypedArray())
+            }
+        }
         val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(), onResult = { uri ->
             operator.value = 0
-            uri?.let { viewModel.importOmpl(it) }
+            uri?.let { opmlImporter.submitUri(it) }
         })
-        //val opmlImporter = OpmlImporter(LocalContext.current, )
         val messages = mutableMapOf(
             Pair(R.string.msg_add_feed_url, stringResource(R.string.msg_add_feed_url))
         )
@@ -102,7 +95,7 @@ fun FeedAddScreen(
                         onSubmit = {
                             viewModel.requestUrl(it)
                             scope.launch {
-                                snackbarHostState.showSnackbar("121")
+                                snackbarHostState.showSnackbar("123")
                             }
                         }
                     )
@@ -113,6 +106,17 @@ fun FeedAddScreen(
                         operator = operator,
                         onSubmit = { /** TODO */ }
                     )
+                }
+            }
+        }
+
+        if(viewState.messages.isNotEmpty()){
+            val message = remember(viewState){ viewState.messages[0] }
+            val messageText = stringResource(message.second)
+            LaunchedEffect(messageText, snackbarHostState) {
+                val snackbarResult = snackbarHostState.showSnackbar(messageText)
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    viewModel.messageShown(message.first)
                 }
             }
         }

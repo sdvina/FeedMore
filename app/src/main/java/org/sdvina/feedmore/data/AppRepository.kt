@@ -1,4 +1,4 @@
-package org.sdvina.feedmore.repository
+package org.sdvina.feedmore.data
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
@@ -8,6 +8,7 @@ import org.sdvina.feedmore.data.local.database.entity.FeedWithEntries
 import org.sdvina.feedmore.data.local.database.entity.Entry
 import org.sdvina.feedmore.data.model.entry.EntryToggleable
 import org.sdvina.feedmore.data.local.database.entity.Feed
+import org.sdvina.feedmore.data.model.cross.FeedTitleWithEntriesToggleable
 import org.sdvina.feedmore.data.model.entry.EntryLite
 import org.sdvina.feedmore.data.model.feed.FeedWithCategory
 import org.sdvina.feedmore.data.model.feed.FeedLite
@@ -31,6 +32,12 @@ class AppRepository private constructor(
 
     fun getFeedUrlsWithCategories(): Flow<List<FeedWithCategory>> = dao.getFeedUrlsWithCategories()
 
+    fun getFeedUrlsSynchronously(): List<String> = dao.getFeedUrlsSynchronously()
+
+    fun getFeedTitleWithEntriesToggleableSynchronously(feedId: String): FeedTitleWithEntriesToggleable {
+        return dao.getFeedTitleAndEntriesToggleableSynchronously(feedId)
+    }
+
     fun getFeedsManageable(): Flow<List<FeedManageable>> = dao.getFeedsManageable()
 
     fun getEntry(entryUrl: String): LiveData<Entry?> = dao.getEntry(entryUrl)
@@ -40,6 +47,10 @@ class AppRepository private constructor(
     fun getPagedNewEntryLites(): PagingSource<Int, EntryLite> = dao.getPagedNewEntryLites()
 
     fun getPagedFavoriteEntryLites(): PagingSource<Int, EntryLite> = dao.getPagedFavoriteEntryLites()
+
+    fun getEntriesToggleableByFeedSynchronously(feedId: String): List<EntryToggleable> {
+        return dao.getEntriesToggleableByFeedSynchronously(feedId)
+    }
 
     fun addFeeds(vararg feed: Feed) {
         executor.execute { dao.addFeeds(*feed) }

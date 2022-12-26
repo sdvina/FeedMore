@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.AppPreferences
 import org.sdvina.feedmore.data.model.entry.EntryLite
-import org.sdvina.feedmore.repository.AppRepository
+import org.sdvina.feedmore.data.AppRepository
 
 data class EntryViewState(
     val entryLites: PagingData<EntryLite> = PagingData.empty(),
@@ -30,6 +30,7 @@ class EntryViewModel(
         get() = _state
 
     init{
+        AppPreferences.lastViewedFeedUrl = "https://zhihu.com/rss"
         viewModelScope.launch {
             combine(
                 getEntryLiteFlow(AppPreferences.lastViewedFeedUrl),
@@ -39,7 +40,6 @@ class EntryViewModel(
                     entryLites = entryLites,
                     refreshing = refreshing
                 )
-
             }.catch { throwable ->
                 // TODO
                 throw throwable
@@ -60,7 +60,7 @@ class EntryViewModel(
         }
     }
 
-    private fun getEntryLiteFlow(feedUrl: String?): Flow<PagingData<EntryLite>> {
+    fun getEntryLiteFlow(feedUrl: String?): Flow<PagingData<EntryLite>> {
         feedUrl?.let {
             return Pager(pagingConfig){
                 repository.getPagedEntryLitesByFeed(feedUrl)
