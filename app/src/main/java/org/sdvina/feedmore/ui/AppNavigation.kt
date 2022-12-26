@@ -13,6 +13,8 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import org.sdvina.feedmore.data.AppRepository
 import org.sdvina.feedmore.ui.entry.EntryListScreen
 import org.sdvina.feedmore.ui.entry.EntryViewModel
+import org.sdvina.feedmore.ui.feed.FeedAddScreen
+import org.sdvina.feedmore.ui.feed.FeedViewModel
 
 object AppDestinations {
     const val ENTRY_LIST_ROUTE = "entryList"
@@ -59,7 +61,13 @@ fun AppNavigation(
             )
         }
         composable(AppDestinations.ADD_FEED_ROUTE) {
-            // TODO
+            val feedViewModel:FeedViewModel = viewModel(
+                factory = FeedViewModel.provideFactory(repository)
+            )
+            FeedAddScreen(
+                navController = navController,
+                viewModel = feedViewModel
+            )
         }
         composable(AppDestinations.MANAGE_FEED_ROUTE) {
             // TODO
