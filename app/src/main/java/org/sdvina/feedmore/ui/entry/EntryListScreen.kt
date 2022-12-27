@@ -147,7 +147,7 @@ fun SwipeRefreshScreen(
     entryLites: LazyPagingItems<EntryLite>,
     modifier: Modifier = Modifier,
     isRefreshing: Boolean = false,
-    onRefresh: () -> Unit = {},
+    onRefresh: () -> Unit = {}
 ) {
     val refreshState = rememberSwipeRefreshState(isRefreshing)
 

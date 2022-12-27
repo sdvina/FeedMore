@@ -4,14 +4,18 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 import org.sdvina.feedmore.data.local.database.AppDataBaseHelper
 import org.sdvina.feedmore.data.AppRepository
+import org.sdvina.feedmore.ui.entry.EntryListScreen
+import org.sdvina.feedmore.ui.entry.EntryViewModel
 import org.sdvina.feedmore.ui.theme.AppTheme
 import org.sdvina.feedmore.util.NetworkMonitor
 
@@ -26,17 +30,18 @@ fun FeedMoreApp(
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
             val navController = rememberAnimatedNavController()
+            val appNavigation = remember(navController){ AppNavigation(navController) }
             ModalNavigationDrawer(
                 drawerState = drawerState,
                 drawerContent = {
                     AppDrawer(
-                        navController = navController,
+                        appNavigation = appNavigation,
                         closeDrawer = { scope.launch { drawerState.close() } },
                         repository = repository
                     )
                 }
             ){
-                AppNavigation(
+                AppNavGraph(
                     navController = navController,
                     openDrawer = { scope.launch { drawerState.open() } },
                     repository = repository
